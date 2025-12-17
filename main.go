@@ -147,7 +147,7 @@ func deleteTask(tasks *[]Task) {
 Main App
 */
 func main() {
-	var menu string = ""
+	var menu string
 	// inisiasi slice
 	var tasks []Task
 
