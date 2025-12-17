@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type Task struct {
@@ -9,7 +13,8 @@ type Task struct {
 	Done  bool
 }
 
-/**
+/*
+*
 Helper Function
 */
 func showMenu() {
@@ -45,11 +50,14 @@ func showTasks(tasks []Task) {
 }
 
 func validateNewTask() string {
-	var inputTask string
-
 	for {
+		reader := bufio.NewReader(os.Stdin)
+
 		fmt.Print("Add new task: ")
-		fmt.Scanf("%s", &inputTask)
+		inputTask, _ := reader.ReadString('\n')
+
+		// remove newline di akhir
+		inputTask = strings.TrimSpace(inputTask)
 
 		if inputTask == "" {
 			fmt.Println("Please input the correct task")
@@ -61,14 +69,21 @@ func validateNewTask() string {
 }
 
 func validateChooseTask(length int, ask string) int {
-	var inputTask int
-
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print(ask)
-		fmt.Scanf("%d", &inputTask)
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
 
-		if inputTask <= length && inputTask >= 1 {
-			return inputTask - 1
+		// convert number string input menjadi int
+		numberTask, err := strconv.Atoi(input)
+		if err != nil {
+			fmt.Println("Please input a number")
+			continue
+		}
+
+		if numberTask <= length && numberTask >= 1 {
+			return numberTask - 1
 		} else {
 			fmt.Println("Please choose the correct task")
 			continue
@@ -76,7 +91,59 @@ func validateChooseTask(length int, ask string) int {
 	}
 }
 
-/**
+/*
+MAIN FUNCTION
+*/
+func addTask(tasks *[]Task) {
+	fmt.Println("===== ADD TASK =====")
+
+	// Validate the input task
+	var inputTask = validateNewTask()
+	// Create new task
+	var newTask = Task{inputTask, false}
+	// Save the new task
+	*tasks = append(*tasks, newTask)
+
+	fmt.Println(" ")
+	pressEnterToContinue()
+}
+
+func markTaskAsDone(tasks *[]Task) {
+	fmt.Println("===== MARK TASK =====")
+
+	// Show Task
+	showTasks(*tasks)
+	fmt.Println("")
+
+	// Validate the input task
+	inputTask := validateChooseTask(len(*tasks), "Choose the task number to be marked: ")
+
+	// Mark task
+	(*tasks)[inputTask].Done = true
+	fmt.Println("Task marked successfully!")
+
+	fmt.Println(" ")
+	pressEnterToContinue()
+}
+
+func deleteTask(tasks *[]Task) {
+	fmt.Println("===== DELETE TASK =====")
+
+	// Show Task
+	showTasks(*tasks)
+
+	// Validate the input task
+	inputTask := validateChooseTask(len(*tasks), "Choose the task number to be deleted: ")
+
+	// Delete Task
+	*tasks = append((*tasks)[:inputTask], (*tasks)[inputTask+1:]...)
+	fmt.Println("Task has been deleted!")
+
+	fmt.Println(" ")
+	pressEnterToContinue()
+}
+
+/*
 Main App
 */
 func main() {
@@ -93,56 +160,19 @@ func main() {
 
 			// Show Tasks
 			showTasks(tasks)
-			fmt.Println("")
 
+			fmt.Println("")
 			pressEnterToContinue()
 			continue
-
 		} else if menu == "2" {
-			fmt.Println("===== ADD TASK =====")
-
-			// Validate the input task
-			var inputTask = validateNewTask()
-			// Create new task
-			var newTask = Task{inputTask, false}
-			// Save the new task
-			tasks = append(tasks, newTask)
-
-			fmt.Println(" ")
-			pressEnterToContinue()
+			addTask(&tasks)
 			continue
-
 		} else if menu == "3" {
-			fmt.Println("===== MARK TASK =====")
-
-			// Show Task
-			showTasks(tasks)
-			fmt.Println("")
-
-			// Validate the input task
-			inputTask := validateChooseTask(len(tasks), "Choose the task number to be marked: ")
-
-			// Mark task
-			tasks[inputTask].Done = true
-			fmt.Println("Task marked successfully!")
-
-			fmt.Println(" ")
-			pressEnterToContinue()
+			markTaskAsDone(&tasks)
+			continue
 		} else if menu == "4" {
-			fmt.Println("===== DELETE TASK =====")
-
-			// Show Task
-			showTasks(tasks)
-
-			// Validate the input task
-			inputTask := validateChooseTask(len(tasks), "Choose the task number to be deleted: ")
-
-			// Delete Task
-			tasks = append(tasks[:inputTask], tasks[inputTask+1:]...)
-			fmt.Println("Task has been deleted!")
-
-			fmt.Println(" ")
-			pressEnterToContinue()
+			deleteTask(&tasks)
+			continue
 		} else if menu == "5" {
 			fmt.Println("===== EXIT =====")
 			fmt.Println("See you next time!")
