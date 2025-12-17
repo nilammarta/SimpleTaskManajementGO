@@ -9,6 +9,9 @@ type Task struct {
 	Done  bool
 }
 
+/**
+Helper Function
+*/
 func showMenu() {
 	fmt.Println("===== SIMPLE TASK MANAGEMENT =====")
 	fmt.Println("1. SHOW TASKS")
@@ -26,9 +29,6 @@ func pressEnterToContinue() {
 	fmt.Println(" ")
 }
 
-/*
-MENU FUNCTION
-*/
 func showTasks(tasks []Task) {
 	if tasks == nil || len(tasks) == 0 {
 		fmt.Println("No tasks found!")
@@ -62,7 +62,7 @@ func validateNewTask() string {
 
 func validateChooseTask(length int, ask string) int {
 	var inputTask int
-	
+
 	for {
 		fmt.Print(ask)
 		fmt.Scanf("%d", &inputTask)
@@ -76,6 +76,9 @@ func validateChooseTask(length int, ask string) int {
 	}
 }
 
+/**
+Main App
+*/
 func main() {
 	var menu string = ""
 	// inisiasi slice
